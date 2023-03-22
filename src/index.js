@@ -30,18 +30,16 @@ const arbToken = new ethers.Contract(ARB_TOKEN_ADDRESS, erc20ABI, arbitrumProvid
 const wallet = new ethers.Wallet(ACCOUNT_PRIVATE_KEY, arbitrumProvider);
 
 const claim = async (nonce) => {
-  // CAN BE CHANGED! Do not forget to check this
-  // const claimTx = await doRequestSafeRepeat({
-  //   request: async () =>
-  //     await arbDistributor.connect(wallet).claim({
-  //       gasLimit: "0x4C4B40",
-  //       gasPrice: "0x3B9ACA00",
-  //       nonce,
-  //     }),
-  //   onFailedMessaged: "Failed to call claim method!",
-  //   waitTimeMS: WAIT_PER_REQUEST_TIME,
-  // });
-  const claimTx = { hash: "0x123" };
+  const claimTx = await doRequestSafeRepeat({
+    request: async () =>
+      await arbDistributor.connect(wallet).claim({
+        gasLimit: "0x4C4B40",
+        gasPrice: "0x3B9ACA00",
+        nonce,
+      }),
+    onFailedMessaged: "Failed to call claim method!",
+    waitTimeMS: WAIT_PER_REQUEST_TIME,
+  });
 
   inspect(`Claim was called successful! Tx hash: ${claimTx.hash}`);
 };
@@ -56,7 +54,7 @@ const transferARB = async (nonce) => {
         await arbToken.connect(wallet).transfer(address, amountBN, {
           gasLimit: "0x4C4B40", // 5kk WEI
           gasPrice: "0x3B9ACA00", // 1kkk WEI
-          nonce: nonce + i, // CAN BE CHANGED! Do not forget to check this
+          nonce: nonce + i,
         }),
       onFailedMessaged: "Failed to call transfer method!",
       waitTimeMS: WAIT_PER_REQUEST_TIME,
@@ -86,15 +84,13 @@ const waitForTargetBlock = async () => {
 const waitForARBOnWallet = async () => {
   inspect(`Balance check for wallet ${wallet.address} started!`);
   let balance;
-  let c = 0; // CAN BE CHANGED! Do not forget to check this
 
   do {
     await wait(BALANCE_CHECK_REPEAT_TIME);
 
     try {
-      c++; // CAN BE CHANGED! Do not forget to check this
       const data = await arbToken.balanceOf(wallet.address);
-      balance = c < 5 ? 0 : +ethers.utils.formatUnits(data, ARB_TOKEN_DECIMALS); // CAN BE CHANGED! Do not forget to check this
+      balance = +ethers.utils.formatUnits(data, ARB_TOKEN_DECIMALS);
       inspect(`Current balance for wallet ${wallet.address} - ${balance} ARB`);
     } catch (e) {
       inspect(`Failed to get ARB balance of wallet ${wallet.address}`);
@@ -113,8 +109,7 @@ const start = async () => {
   await waitForTargetBlock();
   await claim(currentNonce);
   await waitForARBOnWallet();
-  // await transferARB(currentNonce + 1);
-  await transferARB(currentNonce); // CAN BE CHANGED! Do not forget to check this
+  await transferARB(currentNonce + 1);
 };
 
 start();
