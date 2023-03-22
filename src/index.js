@@ -84,6 +84,7 @@ const waitForTargetBlock = async () => {
 };
 
 const waitForARBOnWallet = async () => {
+  inspect(`Balance check for wallet ${wallet.address} started!`);
   let balance;
   let c = 0; // CAN BE CHANGED! Do not forget to check this
 
