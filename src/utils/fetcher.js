@@ -31,35 +31,3 @@ export const doRequestSafeRepeat = async ({ request, onFailedMessaged, unsafe, w
 
   return await doRequest();
 };
-
-const doChunkRequest = async ({ chunk, chunkName, chunkFetcher, chunkIndex, waitTimeMS }) => {
-  const chunkNameComposed = `${chunkName}-chunk #${chunkIndex + 1}`;
-  return await doRequestSafeRepeat({
-    request: () => Promise.all(chunk.map(chunkFetcher)),
-    onFailedMessaged: `Failed to load ${chunkNameComposed}`,
-    waitTimeMS,
-  });
-};
-
-export const chunkFetcher = async ({ chunks, chunkName, chunkFetcher, waitTimeMS }) => {
-  const response = [];
-
-  for (let chunkIndex in chunks) {
-    const chunkResponse = await doChunkRequest({
-      chunk: chunks[chunkIndex],
-      chunkName,
-      chunkFetcher,
-      chunkIndex: +chunkIndex,
-      waitTimeMS,
-    });
-    response.push(...chunkResponse);
-    inspect(`Successfully loaded ${+chunkIndex + 1} of ${chunks.length} ${chunkName} chunks`);
-
-    if (chunks[+chunkIndex + 1]) {
-      inspect(`Waiting for next ${waitTimeMS / 1000} seconds...`);
-      await wait(waitTimeMS);
-    }
-  }
-
-  return response;
-};
