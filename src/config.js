@@ -16,7 +16,7 @@ export const SEND_TO = [
     amount: "12",
   },
   {
-    name: "Kucoin",
+    name: "ByBit",
     address: "0x23", // CAN BE CHANGED! Do not forget to check this
     amount: "12",
   },
