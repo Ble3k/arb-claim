@@ -1,7 +1,6 @@
-import { bootstrap } from "global-agent";
 import { ethers } from "ethers";
 
-import { RPC_API_KEY, ACCOUNT_PRIVATE_KEY, GLOBAL_AGENT_HTTP_PROXY } from "./init.js";
+import { RPC_API_KEY, ACCOUNT_PRIVATE_KEY } from "./init.js";
 import {
   WAIT_PER_REQUEST_TIME,
   BALANCE_CHECK_REPEAT_TIME,
@@ -17,11 +16,6 @@ import {
 import { arbDistributorABI, erc20ABI, arbMulticallABI } from "./ABIs.js";
 import { doRequestSafeRepeat } from "./utils/fetcher.js";
 import wait from "./utils/wait.js";
-
-// for debug purposes
-if (GLOBAL_AGENT_HTTP_PROXY) {
-  bootstrap();
-}
 
 const arbitrumProvider = new ethers.providers.WebSocketProvider(`${ARB_WS_URL}${RPC_API_KEY}`, "arbitrum");
 const arbMulticall = new ethers.Contract(ARB_MULTICALL_ADDRESS, arbMulticallABI, arbitrumProvider);
